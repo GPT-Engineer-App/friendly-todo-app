@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Box, Flex, Heading, VStack, Text, Input, Button, IconButton, useColorModeValue, StackDivider } from "@chakra-ui/react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 const Index = () => {
   const [todos, setTodos] = useState([]);
+  const [inProgress, setInProgress] = useState([]);
+  const [done, setDone] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const bgColor = useColorModeValue("gray.100", "gray.700");
   const navColor = useColorModeValue("blue.500", "blue.300");
@@ -14,6 +16,19 @@ const Index = () => {
       setTodos([...todos, inputValue]);
       setInputValue("");
     }
+  };
+
+  const handleDragStart = (event, todo) => {
+    event.dataTransfer.setData("text/plain", todo);
+  };
+
+  const handleDrop = (event, setList) => {
+    const todo = event.dataTransfer.getData("text");
+    setList((prevList) => [...prevList, todo]);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -40,7 +55,7 @@ const Index = () => {
             {/* Todo Items */}
             {/* Map through todo items here */}
             {todos.map((todo, index) => (
-              <Box key={index} p={4} shadow="md">
+              <Box key={index} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo)}>
                 <Text mb={2}>{todo}</Text>
                 <Button leftIcon={<FaTrash />} colorScheme="red" size="sm">
                   Delete
@@ -50,15 +65,23 @@ const Index = () => {
           </VStack>
 
           {/* In Progress Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setInProgress)} onDragOver={handleDragOver}>
             <Heading size="md">In Progress</Heading>
-            {/* Map through in-progress items here */}
+            {inProgress.map((todo, index) => (
+              <Box key={index} p={4} shadow="md">
+                <Text mb={2}>{todo}</Text>
+              </Box>
+            ))}
           </VStack>
 
           {/* Done Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setDone)} onDragOver={handleDragOver}>
             <Heading size="md">Done</Heading>
-            {/* Map through done items here */}
+            {done.map((todo, index) => (
+              <Box key={index} p={4} shadow="md">
+                <Text mb={2}>{todo}</Text>
+              </Box>
+            ))}
           </VStack>
         </Flex>
       </Flex>

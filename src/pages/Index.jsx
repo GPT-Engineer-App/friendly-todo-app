@@ -22,9 +22,14 @@ const Index = () => {
     event.dataTransfer.setData("text/plain", todo);
   };
 
-  const handleDrop = (event, setList) => {
-    const todo = event.dataTransfer.getData("text");
+  const handleDrop = (event, setList, sourceSetList) => {
+    const todo = event.dataTransfer.getData("text/plain");
     setList((prevList) => [...prevList, todo]);
+    sourceSetList((prevList) => prevList.filter((item) => item !== todo));
+  };
+
+  const removeFromList = (list, setList, todo) => {
+    setList(list.filter((item) => item !== todo));
   };
 
   const handleDragOver = (event) => {
@@ -54,10 +59,10 @@ const Index = () => {
             <Heading size="md">To Do</Heading>
             {/* Todo Items */}
             {/* Map through todo items here */}
-            {todos.map((todo, index) => (
-              <Box key={index} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo)}>
+            {todos.map((todo) => (
+              <Box key={todo} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo)} onDrop={(event) => handleDrop(event, setTodos, setDone)}>
                 <Text mb={2}>{todo}</Text>
-                <Button leftIcon={<FaTrash />} colorScheme="red" size="sm">
+                <Button leftIcon={<FaTrash />} colorScheme="red" size="sm" onClick={() => removeFromList(todos, setTodos, todo)}>
                   Delete
                 </Button>
               </Box>
@@ -65,20 +70,20 @@ const Index = () => {
           </VStack>
 
           {/* In Progress Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setInProgress)} onDragOver={handleDragOver}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setInProgress, setTodos)} onDragOver={handleDragOver}>
             <Heading size="md">In Progress</Heading>
-            {inProgress.map((todo, index) => (
-              <Box key={index} p={4} shadow="md">
+            {inProgress.map((todo) => (
+              <Box key={todo} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo)} onDrop={(event) => handleDrop(event, setInProgress, setTodos)}>
                 <Text mb={2}>{todo}</Text>
               </Box>
             ))}
           </VStack>
 
           {/* Done Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setDone)} onDragOver={handleDragOver}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setDone, setInProgress)} onDragOver={handleDragOver}>
             <Heading size="md">Done</Heading>
-            {done.map((todo, index) => (
-              <Box key={index} p={4} shadow="md">
+            {done.map((todo) => (
+              <Box key={todo} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo)} onDrop={(event) => handleDrop(event, setDone, setInProgress)}>
                 <Text mb={2}>{todo}</Text>
               </Box>
             ))}

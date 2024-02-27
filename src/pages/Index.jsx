@@ -61,7 +61,7 @@ const Index = () => {
         {/* Columns */}
         <Flex flexGrow="1" justify="space-between">
           {/* Todo Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setTodos)} onDragOver={handleDragOver}>
             <Heading size="md">To Do</Heading>
             {/* Todo Items */}
             {/* Map through todo items here */}

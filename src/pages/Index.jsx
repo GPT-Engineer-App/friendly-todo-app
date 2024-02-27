@@ -28,7 +28,7 @@ const Index = () => {
       <Flex flex="1" bg={bgColor} p={4} color="black" direction="column">
         <Flex justify="space-between" mb={4}>
           {/* Todo Input */}
-          <Input placeholder="Add new todo" value={inputValue} onChange={handleInputChange} mr={2} />
+          <Input placeholder="Add new todo" value={inputValue} onChange={handleInputChange} onKeyPress={(event) => event.key === "Enter" && handleAddTodo()} mr={2} />
           <IconButton colorScheme="blue" aria-label="Add todo" icon={<FaPlus />} onClick={handleAddTodo} />
         </Flex>
 

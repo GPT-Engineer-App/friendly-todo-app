@@ -18,9 +18,8 @@ const Index = () => {
     }
   };
 
-  const handleDragStart = (event, todo, setList) => {
+  const handleDragStart = (event, todo) => {
     event.dataTransfer.setData("text/plain", todo);
-    setList((prevList) => prevList.filter((item) => item !== todo));
   };
 
   const handleDrop = (event, setList) => {

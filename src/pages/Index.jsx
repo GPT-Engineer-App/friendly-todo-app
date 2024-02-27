@@ -1,11 +1,20 @@
+import { useState } from "react";
 import { Box, Flex, Heading, VStack, Text, Input, Button, IconButton, useColorModeValue, StackDivider } from "@chakra-ui/react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 const Index = () => {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const bgColor = useColorModeValue("gray.100", "gray.700");
   const navColor = useColorModeValue("blue.500", "blue.300");
 
-  // TODO: Add state management and functions to handle todos
+  const handleInputChange = (event) => setInputValue(event.target.value);
+  const handleAddTodo = () => {
+    if (inputValue.trim()) {
+      setTodos([...todos, inputValue]);
+      setInputValue("");
+    }
+  };
 
   return (
     <Flex h="100vh">
@@ -19,8 +28,8 @@ const Index = () => {
       <Flex flex="1" bg={bgColor} p={4} color="black" direction="column">
         <Flex justify="space-between" mb={4}>
           {/* Todo Input */}
-          <Input placeholder="Add new todo" mr={2} />
-          <IconButton colorScheme="blue" aria-label="Add todo" icon={<FaPlus />} />
+          <Input placeholder="Add new todo" value={inputValue} onChange={handleInputChange} mr={2} />
+          <IconButton colorScheme="blue" aria-label="Add todo" icon={<FaPlus />} onClick={handleAddTodo} />
         </Flex>
 
         {/* Columns */}
@@ -30,12 +39,14 @@ const Index = () => {
             <Heading size="md">To Do</Heading>
             {/* Todo Items */}
             {/* Map through todo items here */}
-            <Box p={4} shadow="md">
-              <Text mb={2}>Task 1</Text>
-              <Button leftIcon={<FaTrash />} colorScheme="red" size="sm">
-                Delete
-              </Button>
-            </Box>
+            {todos.map((todo, index) => (
+              <Box key={index} p={4} shadow="md">
+                <Text mb={2}>{todo}</Text>
+                <Button leftIcon={<FaTrash />} colorScheme="red" size="sm">
+                  Delete
+                </Button>
+              </Box>
+            ))}
           </VStack>
 
           {/* In Progress Column */}

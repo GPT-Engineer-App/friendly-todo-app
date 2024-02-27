@@ -22,15 +22,12 @@ const Index = () => {
     event.dataTransfer.setData("text/plain", todo);
   };
 
-  const handleDrop = (event, setList) => {
+  const handleDrop = (event, setTargetList, sourceLists) => {
     const todo = event.dataTransfer.getData("text/plain");
-    setList((prevList) => {
-      // Avoid adding the same todo if it's already in the list
-      if (!prevList.includes(todo)) {
-        return [...prevList, todo];
-      }
-      return prevList;
-    });
+    // Remove the todo from all other lists it might be in
+    sourceLists.forEach((setList) => setList((prevList) => prevList.filter((item) => item !== todo)));
+    // Add the todo to the target list if it's not already there
+    setTargetList((prevList) => (!prevList.includes(todo) ? [...prevList, todo] : prevList));
   };
 
   const removeFromList = (list, setList, todo) => {
@@ -60,7 +57,7 @@ const Index = () => {
         {/* Columns */}
         <Flex flexGrow="1" justify="space-between">
           {/* Todo Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setTodos)} onDragOver={handleDragOver}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setTodos, [setInProgress, setDone])} onDragOver={handleDragOver}>
             <Heading size="md">To Do</Heading>
             {/* Todo Items */}
             {/* Map through todo items here */}
@@ -75,7 +72,7 @@ const Index = () => {
           </VStack>
 
           {/* In Progress Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setInProgress, setTodos)} onDragOver={handleDragOver}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setInProgress, [setTodos, setDone])} onDragOver={handleDragOver}>
             <Heading size="md">In Progress</Heading>
             {inProgress.map((todo) => (
               <Box key={todo} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo, setInProgress)} onDrop={(event) => handleDrop(event, setInProgress)}>
@@ -85,7 +82,7 @@ const Index = () => {
           </VStack>
 
           {/* Done Column */}
-          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setDone, setInProgress)} onDragOver={handleDragOver}>
+          <VStack divider={<StackDivider />} borderColor="gray.200" borderWidth="2px" p={4} w="32%" minH="70vh" bg="white" align="stretch" spacing={4} onDrop={(event) => handleDrop(event, setDone, [setTodos, setInProgress])} onDragOver={handleDragOver}>
             <Heading size="md">Done</Heading>
             {done.map((todo) => (
               <Box key={todo} p={4} shadow="md" draggable onDragStart={(event) => handleDragStart(event, todo, setDone)} onDrop={(event) => handleDrop(event, setDone)}>
